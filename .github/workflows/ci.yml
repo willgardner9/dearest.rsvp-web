@@ -1,0 +1,39 @@
+name: CI
+
+# Pull requests run the checks. A pull request must pass before merge.
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+# Cancel an old run when you push a new commit to the same ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Format, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      # actions/checkout v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      # Corepack must run before setup-node, so that the yarn cache works.
+      - name: Enable Corepack
+        run: corepack enable
+
+      # actions/setup-node v7.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn fmt:check
+      - run: yarn typecheck
+      - run: yarn test
+      - run: yarn build

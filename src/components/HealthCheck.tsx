@@ -9,9 +9,7 @@ export function HealthCheck() {
       <Button loading={isFetching} onClick={() => refetch()}>
         Check API health
       </Button>
-      {data && (
-        <Code block>{JSON.stringify(data, null, 2)}</Code>
-      )}
+      {data && <Code block>{JSON.stringify(data, null, 2)}</Code>}
       {error && (
         <Alert color="red" title="Request failed">
           <Text size="sm">

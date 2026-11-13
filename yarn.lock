@@ -1099,6 +1099,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"career-web@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "career-web@workspace:."
+  dependencies:
+    "@mantine/core": "npm:9.8.0"
+    "@mantine/hooks": "npm:9.8.0"
+    "@tanstack/react-query": "npm:^5.107.1"
+    "@types/react": "npm:^19.2.14"
+    "@types/react-dom": "npm:^19.2.3"
+    "@vitejs/plugin-react": "npm:^6.0.1"
+    postcss: "npm:^8.5.8"
+    postcss-preset-mantine: "npm:1.18.0"
+    postcss-simple-vars: "npm:^7.0.1"
+    react: "npm:^19.2.4"
+    react-dom: "npm:^19.2.4"
+    typescript: "npm:6.0.2"
+    vite: "catalog:"
+    vite-plus: "catalog:"
+  languageName: unknown
+  linkType: soft
+
 "chai@npm:^6.2.2":
   version: 6.3.0
   resolution: "chai@npm:6.3.0"
@@ -2650,27 +2671,6 @@ __metadata:
   checksum: 10c0/41a5bdd214df2f6c3ecf8622745e4a366c4adced864bc3c833739791aeeeb1838119af7daed4ba36428114b5c67dcda034a79c882e97e43c03e66a4dd7389942
   languageName: node
   linkType: hard
-
-"vite-min-template@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "vite-min-template@workspace:."
-  dependencies:
-    "@mantine/core": "npm:9.8.0"
-    "@mantine/hooks": "npm:9.8.0"
-    "@tanstack/react-query": "npm:^5.107.1"
-    "@types/react": "npm:^19.2.14"
-    "@types/react-dom": "npm:^19.2.3"
-    "@vitejs/plugin-react": "npm:^6.0.1"
-    postcss: "npm:^8.5.8"
-    postcss-preset-mantine: "npm:1.18.0"
-    postcss-simple-vars: "npm:^7.0.1"
-    react: "npm:^19.2.4"
-    react-dom: "npm:^19.2.4"
-    typescript: "npm:6.0.2"
-    vite: "catalog:"
-    vite-plus: "catalog:"
-  languageName: unknown
-  linkType: soft
 
 "vite-plus@npm:1.0.0":
   version: 1.0.0

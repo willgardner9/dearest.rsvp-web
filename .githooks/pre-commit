@@ -1,0 +1,15 @@
+#!/bin/sh
+# Check the format before each commit. This check is fast.
+
+# Git apps with a GUI do not load the shell profile. Add the common Node paths.
+PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
+
+if ! command -v yarn >/dev/null 2>&1; then
+    echo "pre-commit: yarn not found. Install Node and enable Corepack." >&2
+    exit 1
+fi
+
+if ! yarn fmt:check >/dev/null 2>&1; then
+    echo "pre-commit: the code is not formatted. Run 'yarn fmt' and commit again." >&2
+    exit 1
+fi
