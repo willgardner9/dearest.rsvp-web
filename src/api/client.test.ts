@@ -35,4 +35,25 @@ describe("apiFetch", () => {
     mockFetch(new Response(null, { status: 204 }));
     await expect(apiFetch("/empty")).resolves.toBeNull();
   });
+
+  it("sends_credentials_include", async () => {
+    const fetchMock = mockFetch(new Response(null, { status: 204 }));
+    await apiFetch("/auth/me");
+    expect(fetchMock.mock.calls[0][1].credentials).toBe("include");
+  });
+
+  it("sends_json_body_as_post", async () => {
+    const fetchMock = mockFetch(new Response(null, { status: 204 }));
+    await apiFetch("/x", { json: { a: 1 } });
+    const init = fetchMock.mock.calls[0][1];
+    expect(init.method).toBe("POST");
+    expect(init.body).toBe('{"a":1}');
+    expect(init.headers["Content-Type"]).toBe("application/json");
+  });
+
+  it("keeps_explicit_method_with_json", async () => {
+    const fetchMock = mockFetch(new Response(null, { status: 204 }));
+    await apiFetch("/x", { method: "DELETE", json: { a: 1 } });
+    expect(fetchMock.mock.calls[0][1].method).toBe("DELETE");
+  });
 });
