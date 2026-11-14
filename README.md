@@ -1,8 +1,8 @@
-# career-web
+# dearest.rsvp-web
 
-The web frontend for the career application. It uses React, Mantine, TanStack Query, and Vite+.
+The web frontend for the dearest application. It uses React, Mantine, TanStack Query, and Vite+.
 
-The API is in the `career` repository. The deployed API is `https://api.willgardner.online`.
+The API is in the `dearest.rsvp-api` repository. The deployed API is `https://api.dearest.rsvp`.
 
 ## Setup
 
@@ -38,7 +38,7 @@ The last command turns on the Git hooks. Run it one time in each clone.
 `.env.development` and `.env.production` have the default values.
 In development, the browser calls `/api`. Vite removes the `/api` prefix and forwards the call to `DEV_API_PROXY_TARGET`.
 This avoids CORS in development.
-In production, the browser calls `https://api.willgardner.online` directly. The API must allow the frontend origin with CORS.
+In production, the browser calls `https://api.dearest.rsvp` directly. The API must allow the frontend origin with CORS.
 
 ## Project layout
 
