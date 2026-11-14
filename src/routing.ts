@@ -15,6 +15,9 @@ export function resolveHome(me: Me | null, lastTenantId: string | null): string 
 export function safeRedirect(target: string | undefined): string {
   if (!target || !target.startsWith("/")) return "/";
   if (target.startsWith("//") || target.startsWith("/\\")) return "/";
+  // The URL parser removes tab and newline characters, so "/\t/x" becomes "//x".
+  // Reject all control characters and all backslashes.
+  if (/[\u0000-\u001f\u007f\\]/.test(target)) return "/";
   return target;
 }
 

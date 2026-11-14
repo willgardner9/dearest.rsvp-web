@@ -43,6 +43,21 @@ describe("resolveHome", () => {
 });
 
 describe("safeRedirect", () => {
+  it("safeRedirect_rejects_targets_that_the_url_parser_makes_external", () => {
+    // The URL parser removes tab and newline characters, and reads "\\" as "/".
+    for (const target of [
+      "/\t/evil.example",
+      "/\n/evil.example",
+      "/\r\n/evil.example",
+      "\\/evil.example",
+    ]) {
+      expect(safeRedirect(target)).toBe("/");
+    }
+    expect(new URL(safeRedirect("/\t/evil.example"), "https://app.example").origin).toBe(
+      "https://app.example",
+    );
+  });
+
   it("safeRedirect_accepts_local_path", () => {
     expect(safeRedirect("/w/a/members")).toBe("/w/a/members");
   });
