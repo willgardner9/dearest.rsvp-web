@@ -11,6 +11,7 @@ import { meQueryOptions } from "./api/auth";
 import type { Me } from "./api/types";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
+import { MembersPage } from "./pages/MembersPage";
 import { NewWeddingPage } from "./pages/NewWeddingPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
@@ -182,7 +183,7 @@ const weddingHomeRoute = createRoute({
 const membersRoute = createRoute({
   getParentRoute: () => weddingRoute,
   path: "/members",
-  component: placeholder("Members"),
+  component: MembersPage,
 });
 
 const routeTree = rootRoute.addChildren([
