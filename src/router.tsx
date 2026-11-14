@@ -9,7 +9,11 @@ import {
 import { Title } from "@mantine/core";
 import { meQueryOptions } from "./api/auth";
 import type { Me } from "./api/types";
+import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { SignupPage } from "./pages/SignupPage";
+import { VerifyEmailConfirmPage } from "./pages/VerifyEmailConfirmPage";
+import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { queryClient } from "./queryClient";
 import { readLastTenant, resolveHome, writeLastTenant } from "./routing";
 
@@ -86,11 +90,12 @@ const indexRoute = createRoute({
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
-  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { redirect?: string; reset?: 1 } => ({
     redirect: optionalString(search.redirect),
+    reset: search.reset === 1 || search.reset === "1" ? 1 : undefined,
   }),
   beforeLoad: requireLoggedOut,
-  component: placeholder("Log in"),
+  component: LoginPage,
 });
 
 const signupRoute = createRoute({
@@ -100,14 +105,14 @@ const signupRoute = createRoute({
     redirect: optionalString(search.redirect),
   }),
   beforeLoad: requireLoggedOut,
-  component: placeholder("Sign up"),
+  component: SignupPage,
 });
 
 const verifyEmailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/verify-email",
   beforeLoad: requireUnverified,
-  component: placeholder("Verify your email"),
+  component: VerifyEmailPage,
 });
 
 const verifyEmailConfirmRoute = createRoute({
@@ -116,7 +121,7 @@ const verifyEmailConfirmRoute = createRoute({
   validateSearch: (search: Record<string, unknown>): { token: string } => ({
     token: optionalString(search.token) ?? "",
   }),
-  component: placeholder("Confirm your email"),
+  component: VerifyEmailConfirmPage,
 });
 
 const forgotPasswordRoute = createRoute({
