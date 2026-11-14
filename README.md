@@ -53,4 +53,4 @@ To skip the hook one time, add `--no-verify` to the Git command.
 
 ## CI
 
-GitHub Actions runs the format check, the typecheck, the unit tests, and the build on each pull request and each push to `master`.
+GitHub Actions runs the format check, the typecheck, the unit tests, and the build on each pull request and each push to `main`.
