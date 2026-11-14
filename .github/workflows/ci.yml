@@ -55,6 +55,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Run one deploy at a time. A new deploy waits for the old deploy to end.
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
     permissions:
       contents: read
       packages: write
