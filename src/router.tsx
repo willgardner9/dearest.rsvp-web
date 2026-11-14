@@ -9,8 +9,10 @@ import {
 import { Title } from "@mantine/core";
 import { meQueryOptions } from "./api/auth";
 import type { Me } from "./api/types";
+import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { SignupPage } from "./pages/SignupPage";
 import { VerifyEmailConfirmPage } from "./pages/VerifyEmailConfirmPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
@@ -128,7 +130,7 @@ const forgotPasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/forgot-password",
   beforeLoad: requireLoggedOut,
-  component: placeholder("Forgot password"),
+  component: ForgotPasswordPage,
 });
 
 const resetPasswordRoute = createRoute({
@@ -137,7 +139,7 @@ const resetPasswordRoute = createRoute({
   validateSearch: (search: Record<string, unknown>): { token: string } => ({
     token: optionalString(search.token) ?? "",
   }),
-  component: placeholder("Reset password"),
+  component: ResetPasswordPage,
 });
 
 const inviteRoute = createRoute({
