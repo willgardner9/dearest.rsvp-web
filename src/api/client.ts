@@ -22,10 +22,19 @@ async function parseBody(response: Response): Promise<unknown> {
   }
 }
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+export type ApiFetchInit = RequestInit & { json?: unknown };
+
+export async function apiFetch<T>(path: string, init?: ApiFetchInit): Promise<T> {
+  const { json, ...rest } = init ?? {};
+  const headers: Record<string, string> = { Accept: "application/json" };
+  if (json !== undefined) headers["Content-Type"] = "application/json";
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: { Accept: "application/json", ...init?.headers },
+    ...rest,
+    method: rest.method ?? (json !== undefined ? "POST" : undefined),
+    body: json !== undefined ? JSON.stringify(json) : rest.body,
+    // The session is an HttpOnly cookie. Send it on every call.
+    credentials: "include",
+    headers: { ...headers, ...(rest.headers as Record<string, string> | undefined) },
   });
   const body = await parseBody(response);
   if (!response.ok) throw new ApiError(response.status, body);
