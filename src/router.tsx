@@ -6,7 +6,7 @@ import {
   Outlet,
   redirect,
 } from "@tanstack/react-router";
-import { meQueryOptions } from "./api/auth";
+import { meKeys, meQueryOptions } from "./api/auth";
 import type { Me } from "./api/types";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { InvitePage } from "./pages/InvitePage";
@@ -22,7 +22,7 @@ import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import { WeddingHomePage } from "./pages/WeddingHomePage";
 import { WeddingLayout } from "./components/WeddingLayout";
 import { queryClient } from "./queryClient";
-import { readLastTenant, resolveHome, writeLastTenant } from "./routing";
+import { readLastTenant, resolveHome, safeRedirect, writeLastTenant } from "./routing";
 
 export interface RouterContext {
   queryClient: QueryClient;
@@ -31,6 +31,12 @@ export interface RouterContext {
 interface GuardArgs {
   context: RouterContext;
   location: { href: string };
+  search?: { redirect?: string };
+}
+
+// Returns the path for a user who has a session, and keeps the redirect target.
+function homeOrRedirect(me: Me, search: GuardArgs["search"]): string {
+  return search?.redirect ? safeRedirect(search.redirect) : resolveHome(me, readLastTenant());
 }
 
 function loadMe(context: RouterContext): Promise<Me | null> {
@@ -38,21 +44,23 @@ function loadMe(context: RouterContext): Promise<Me | null> {
 }
 
 // A logged-in user does not see the logged-out pages.
-async function requireLoggedOut({ context }: GuardArgs) {
+async function requireLoggedOut({ context, search }: GuardArgs) {
   const me = await loadMe(context);
-  if (me) throw redirect({ href: resolveHome(me, readLastTenant()) });
+  if (me) throw redirect({ href: homeOrRedirect(me, search) });
 }
 
-async function requireUnverified({ context }: GuardArgs) {
+async function requireUnverified({ context, search }: GuardArgs) {
   const me = await loadMe(context);
-  if (!me) throw redirect({ href: "/login" });
-  if (me.user.email_verified) throw redirect({ href: "/" });
+  if (!me) throw redirect({ to: "/login", search: { redirect: search?.redirect } });
+  if (me.user.email_verified) throw redirect({ href: homeOrRedirect(me, search) });
 }
 
 async function requireVerified({ context, location }: GuardArgs): Promise<{ me: Me }> {
   const me = await loadMe(context);
   if (!me) throw redirect({ to: "/login", search: { redirect: location.href } });
-  if (!me.user.email_verified) throw redirect({ href: "/verify-email" });
+  if (!me.user.email_verified) {
+    throw redirect({ to: "/verify-email", search: { redirect: location.href } });
+  }
   return { me };
 }
 
@@ -112,6 +120,9 @@ const signupRoute = createRoute({
 const verifyEmailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/verify-email",
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
+    redirect: optionalString(search.redirect),
+  }),
   beforeLoad: requireUnverified,
   component: VerifyEmailPage,
 });
@@ -195,6 +206,18 @@ const routeTree = rootRoute.addChildren([
 ]);
 
 export const router = createRouter({ routeTree, context: { queryClient } });
+
+// When the me query changes to null (logout, or a 401 from the API), run the
+// route guards again. A protected page then goes to the login page.
+queryClient.getQueryCache().subscribe((event) => {
+  if (
+    event.type === "updated" &&
+    event.query.queryKey[0] === meKeys.all[0] &&
+    event.query.state.data === null
+  ) {
+    void router.invalidate();
+  }
+});
 
 declare module "@tanstack/react-router" {
   interface Register {

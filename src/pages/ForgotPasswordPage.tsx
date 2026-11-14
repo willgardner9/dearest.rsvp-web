@@ -1,6 +1,6 @@
 import { Alert, Button, Stack, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { errorCode, errorMessage, useRequestPasswordReset } from "../api";
+import { ApiError, errorCode, errorMessage, useRequestPasswordReset } from "../api";
 import { AnchorLink } from "../components/AnchorLink";
 import { AuthCard } from "../components/AuthCard";
 
@@ -9,9 +9,16 @@ export function ForgotPasswordPage() {
   const form = useForm({ mode: "uncontrolled", initialValues: { email: "" } });
 
   const onSubmit = form.onSubmit((values) => request.mutate(values));
-  // Only rate_limited shows. Other results do not tell if an account exists.
-  const rateLimited = errorCode(request.error) === "rate_limited";
-  const done = request.isSuccess || (request.isError && !rateLimited);
+  // Show an error if the request failed: no response, a server error, rate_limited,
+  // or invalid_input. Other 4xx results do not tell if an account exists.
+  const code = errorCode(request.error);
+  const failed =
+    request.isError &&
+    (!(request.error instanceof ApiError) ||
+      request.error.status >= 500 ||
+      code === "rate_limited" ||
+      code === "invalid_input");
+  const done = request.isSuccess || (request.isError && !failed);
 
   return (
     <AuthCard title="Reset your password">
@@ -23,7 +30,7 @@ export function ForgotPasswordPage() {
       ) : (
         <form onSubmit={onSubmit}>
           <Stack>
-            {rateLimited && <Alert color="red">{errorMessage(request.error)}</Alert>}
+            {failed && <Alert color="red">{errorMessage(request.error)}</Alert>}
             <TextInput
               label="Email"
               type="email"

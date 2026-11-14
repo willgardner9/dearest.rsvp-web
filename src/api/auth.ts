@@ -62,7 +62,7 @@ export function useVerifyEmail() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { token: string }) => apiFetch<null>("/auth/verify-email", { json: input }),
-    onSuccess: () => refreshMe(queryClient),
+    onSuccess: () => refreshMeAfterSuccess(queryClient),
   });
 }
 
@@ -93,6 +93,12 @@ export function useConfirmPasswordReset() {
 // cache, so a change to the memberships or the verified state must be in the cache first.
 export function refreshMe(queryClient: QueryClient): Promise<Me | null> {
   return queryClient.fetchQuery({ ...meQueryOptions, staleTime: 0 });
+}
+
+// Use this after a mutation that the server accepted. A failed refresh must not
+// change the mutation to an error, because the change on the server is done.
+export async function refreshMeAfterSuccess(queryClient: QueryClient): Promise<void> {
+  await refreshMe(queryClient).catch(() => undefined);
 }
 
 // Forget the old user after logout. Keep the me query itself, so that the

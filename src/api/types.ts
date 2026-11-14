@@ -27,6 +27,7 @@ export interface Invite {
 }
 
 export interface InvitePreview {
+  tenant_id: string;
   tenant_name: string;
   inviter_name: string;
   email: string;

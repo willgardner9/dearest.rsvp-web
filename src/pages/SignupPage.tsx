@@ -18,7 +18,7 @@ export function SignupPage() {
 
   const onSubmit = form.onSubmit((values) => {
     signup.mutate(values, {
-      onSuccess: () => void navigate({ href: "/verify-email" }),
+      onSuccess: () => void navigate({ to: "/verify-email", search: { redirect } }),
     });
   });
 

@@ -115,7 +115,7 @@ function PendingInvites({ tenantId }: { tenantId: string }) {
         </Table.Thead>
         <Table.Tbody>
           {invites.map((invite) => (
-            <InviteRow key={invite.id} tenantId={tenantId} invite={invite} />
+            <InviteRow key={invite.email} tenantId={tenantId} invite={invite} />
           ))}
         </Table.Tbody>
       </Table>

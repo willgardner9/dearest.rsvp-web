@@ -3,7 +3,7 @@ import { useForm } from "@mantine/form";
 import { errorMessage, useCreateTenant } from "../api";
 import type { Tenant } from "../api/types";
 
-// Shared by the onboarding page and the new wedding page.
+// The onboarding page and the new wedding page use this form.
 export function WeddingNameForm({
   submitLabel,
   onCreated,

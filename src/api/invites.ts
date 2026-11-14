@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { refreshMe } from "./auth";
+import { refreshMeAfterSuccess } from "./auth";
 import { apiFetch } from "./client";
 import type { Invite, InvitePreview } from "./types";
 
@@ -56,6 +56,6 @@ export function useAcceptInvite(token: string) {
       apiFetch<{ tenant_id: string }>(`/invites/${encodeURIComponent(token)}/accept`, {
         json: input,
       }),
-    onSuccess: () => refreshMe(queryClient),
+    onSuccess: () => refreshMeAfterSuccess(queryClient),
   });
 }

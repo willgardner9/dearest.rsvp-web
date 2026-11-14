@@ -1,10 +1,14 @@
 import { Alert, Button, Group, Stack, Text } from "@mantine/core";
-import { useNavigate } from "@tanstack/react-router";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { errorMessage, useLogout, useMe, useResendVerification } from "../api";
 import { AuthCard } from "../components/AuthCard";
+import { safeRedirect } from "../routing";
+
+const route = getRouteApi("/verify-email");
 
 export function VerifyEmailPage() {
+  const { redirect } = route.useSearch();
   const navigate = useNavigate();
   // Poll and refetch on focus, so that a verification in another tab moves this tab on.
   const { data: me } = useMe({ refetchOnWindowFocus: true, refetchInterval: 10_000 });
@@ -13,8 +17,8 @@ export function VerifyEmailPage() {
 
   const verified = me?.user.email_verified ?? false;
   useEffect(() => {
-    if (verified) void navigate({ href: "/" });
-  }, [verified, navigate]);
+    if (verified) void navigate({ href: safeRedirect(redirect) });
+  }, [verified, navigate, redirect]);
 
   return (
     <AuthCard title="Check your inbox">

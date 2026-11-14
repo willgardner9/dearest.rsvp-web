@@ -29,6 +29,16 @@ export function InvitePage() {
     );
   }
 
+  // Without me, the page cannot tell if the user has a session. Do not show the
+  // logged-out choices to a user who has a session.
+  if (me.isError) {
+    return (
+      <AuthCard title="Invite">
+        <Text>{errorMessage(me.error)}</Text>
+      </AuthCard>
+    );
+  }
+
   if (preview.isError) {
     const notFound = preview.error instanceof ApiError && preview.error.status === 404;
     return (
@@ -76,7 +86,7 @@ function InviteAction({
     return <JoinForm token={token} invite={invite} />;
   }
   if (sameEmail(me.user.email, invite.email)) {
-    return <AcceptButton token={token} invite={invite} me={me} />;
+    return <AcceptButton token={token} invite={invite} />;
   }
   return <EmailMismatch invite={invite} me={me} />;
 }
@@ -144,7 +154,7 @@ function JoinForm({ token, invite }: { token: string; invite: InvitePreview }) {
   );
 }
 
-function AcceptButton({ token, invite, me }: { token: string; invite: InvitePreview; me: Me }) {
+function AcceptButton({ token, invite }: { token: string; invite: InvitePreview }) {
   const navigate = useNavigate();
   const accept = useAcceptInvite(token);
 
@@ -156,10 +166,8 @@ function AcceptButton({ token, invite, me }: { token: string; invite: InvitePrev
           void navigate({ to: "/w/$tenantId", params: { tenantId: tenant_id } }),
         onError: (error) => {
           if (errorCode(error) !== "already_member") return;
-          // The user is a member already. Open that wedding if the name matches one.
-          const match = me.memberships.find((m) => m.tenant_name === invite.tenant_name);
-          if (match) void navigate({ to: "/w/$tenantId", params: { tenantId: match.tenant_id } });
-          else void navigate({ href: "/" });
+          // The user is a member already. Open the wedding of this invite.
+          void navigate({ to: "/w/$tenantId", params: { tenantId: invite.tenant_id } });
         },
       },
     );
