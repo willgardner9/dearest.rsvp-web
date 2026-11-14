@@ -6,10 +6,10 @@ import {
   Outlet,
   redirect,
 } from "@tanstack/react-router";
-import { Title } from "@mantine/core";
 import { meQueryOptions } from "./api/auth";
 import type { Me } from "./api/types";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
+import { InvitePage } from "./pages/InvitePage";
 import { LoginPage } from "./pages/LoginPage";
 import { MembersPage } from "./pages/MembersPage";
 import { NewWeddingPage } from "./pages/NewWeddingPage";
@@ -68,12 +68,6 @@ async function requireMember(args: GuardArgs & { params: { tenantId: string } })
   if (!me.memberships.some((m) => m.tenant_id === tenantId)) throw redirect({ href: "/" });
   writeLastTenant(tenantId);
   return { me };
-}
-
-function placeholder(name: string) {
-  return function Placeholder() {
-    return <Title p="xl">{name}</Title>;
-  };
 }
 
 function optionalString(value: unknown): string | undefined {
@@ -150,7 +144,7 @@ const resetPasswordRoute = createRoute({
 const inviteRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/invite/$token",
-  component: placeholder("Invite"),
+  component: InvitePage,
 });
 
 const onboardingRoute = createRoute({
