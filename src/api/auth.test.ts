@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { ApiError } from "./client";
-import { QueryClient } from "@tanstack/react-query";
-import { fetchMe, meKeys, refreshMe } from "./auth";
+import { QueryClient, QueryObserver } from "@tanstack/react-query";
+import { clearSession, fetchMe, meKeys, meQueryOptions, refreshMe } from "./auth";
 import type { Me } from "./types";
 
 function mockFetch(response: Response) {
@@ -44,5 +44,26 @@ describe("refreshMe", () => {
     await refreshMe(queryClient);
 
     expect(queryClient.getQueryData(meKeys.all)).toEqual(after);
+  });
+});
+
+describe("clearSession", () => {
+  it("clearSession_notifies_me_observer_and_removes_other_data", () => {
+    const me: Me = {
+      user: { id: "u", email: "a@example.com", name: "A", email_verified: true },
+      memberships: [],
+    };
+    const queryClient = new QueryClient();
+    queryClient.setQueryData(meKeys.all, me);
+    queryClient.setQueryData(["tenants", "t1"], { id: "t1", name: "A & B" });
+    const observer = new QueryObserver(queryClient, { ...meQueryOptions, enabled: false });
+    const seen: unknown[] = [];
+    const unsubscribe = observer.subscribe((result) => seen.push(result.data));
+
+    clearSession(queryClient);
+
+    expect(seen.at(-1)).toBeNull();
+    expect(queryClient.getQueryData(["tenants", "t1"])).toBeUndefined();
+    unsubscribe();
   });
 });

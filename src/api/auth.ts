@@ -54,11 +54,7 @@ export function useLogout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => apiFetch<null>("/auth/logout", { method: "POST" }),
-    onSuccess: () => {
-      // Remove the data of the old user, then keep a known "no session" state.
-      queryClient.clear();
-      queryClient.setQueryData(meKeys.all, null);
-    },
+    onSuccess: () => clearSession(queryClient),
   });
 }
 
@@ -89,7 +85,7 @@ export function useConfirmPasswordReset() {
     mutationFn: (input: { token: string; password: string }) =>
       apiFetch<null>("/auth/password-reset/confirm", { json: input }),
     // The API deletes all sessions of the user.
-    onSuccess: () => queryClient.setQueryData(meKeys.all, null),
+    onSuccess: () => clearSession(queryClient),
   });
 }
 
@@ -97,4 +93,11 @@ export function useConfirmPasswordReset() {
 // cache, so a change to the memberships or the verified state must be in the cache first.
 export function refreshMe(queryClient: QueryClient): Promise<Me | null> {
   return queryClient.fetchQuery({ ...meQueryOptions, staleTime: 0 });
+}
+
+// Forget the old user after logout. Keep the me query itself, so that the
+// components that observe it get null. Remove all other data of the old user.
+export function clearSession(queryClient: QueryClient) {
+  queryClient.setQueryData(meKeys.all, null);
+  queryClient.removeQueries({ predicate: (query) => query.queryKey[0] !== meKeys.all[0] });
 }
