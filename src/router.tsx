@@ -11,11 +11,15 @@ import { meQueryOptions } from "./api/auth";
 import type { Me } from "./api/types";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
+import { NewWeddingPage } from "./pages/NewWeddingPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { OnboardingPage } from "./pages/OnboardingPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { SignupPage } from "./pages/SignupPage";
 import { VerifyEmailConfirmPage } from "./pages/VerifyEmailConfirmPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
+import { WeddingHomePage } from "./pages/WeddingHomePage";
+import { WeddingLayout } from "./components/WeddingLayout";
 import { queryClient } from "./queryClient";
 import { readLastTenant, resolveHome, writeLastTenant } from "./routing";
 
@@ -152,27 +156,27 @@ const onboardingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/onboarding",
   beforeLoad: requireNoTenants,
-  component: placeholder("Create your wedding"),
+  component: OnboardingPage,
 });
 
 const newWeddingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/new-wedding",
   beforeLoad: requireVerified,
-  component: placeholder("Create another wedding"),
+  component: NewWeddingPage,
 });
 
 const weddingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/w/$tenantId",
   beforeLoad: requireMember,
-  component: Outlet,
+  component: WeddingLayout,
 });
 
 const weddingHomeRoute = createRoute({
   getParentRoute: () => weddingRoute,
   path: "/",
-  component: placeholder("Wedding"),
+  component: WeddingHomePage,
 });
 
 const membersRoute = createRoute({

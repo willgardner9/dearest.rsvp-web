@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { meKeys } from "./auth";
+import { refreshMe } from "./auth";
 import { apiFetch } from "./client";
 import type { Member, Tenant } from "./types";
 
@@ -27,6 +27,6 @@ export function useCreateTenant() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { name: string }) => apiFetch<Tenant>("/tenants", { json: input }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: meKeys.all }),
+    onSuccess: () => refreshMe(queryClient),
   });
 }

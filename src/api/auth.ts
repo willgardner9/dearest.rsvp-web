@@ -1,4 +1,10 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type QueryClient,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { ApiError, apiFetch } from "./client";
 import type { Me } from "./types";
 
@@ -60,7 +66,7 @@ export function useVerifyEmail() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { token: string }) => apiFetch<null>("/auth/verify-email", { json: input }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: meKeys.all }),
+    onSuccess: () => refreshMe(queryClient),
   });
 }
 
@@ -85,4 +91,10 @@ export function useConfirmPasswordReset() {
     // The API deletes all sessions of the user.
     onSuccess: () => queryClient.setQueryData(meKeys.all, null),
   });
+}
+
+// Fetch me again, also when no component observes it. The route guards read the
+// cache, so a change to the memberships or the verified state must be in the cache first.
+export function refreshMe(queryClient: QueryClient): Promise<Me | null> {
+  return queryClient.fetchQuery({ ...meQueryOptions, staleTime: 0 });
 }
