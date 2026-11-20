@@ -1,4 +1,4 @@
-import type { Me } from "./api/types";
+import type { Me } from "./api";
 
 const LAST_TENANT_KEY = "dearest.lastTenantId";
 

@@ -32,7 +32,11 @@ jobs:
           node-version-file: .nvmrc
           cache: yarn
 
+      # The install step runs `yarn api:generate`. It reads the spec from the
+      # deployed API and makes src/api/generated/. The step fails if the API
+      # is down or sends a spec that the generator cannot read.
       - run: yarn install --immutable
+
       - run: yarn fmt:check
       - run: yarn typecheck
       - run: yarn test

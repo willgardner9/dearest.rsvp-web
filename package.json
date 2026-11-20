@@ -11,7 +11,9 @@
     "test": "vp test run",
     "fmt": "vp fmt",
     "fmt:check": "vp fmt --check",
-    "check": "vp check"
+    "check": "vp check",
+    "api:generate": "NODE_OPTIONS=\"--import ./scripts/typescript-6-hooks.mjs\" openapi-ts",
+    "postinstall": "yarn api:generate"
   },
   "dependencies": {
     "@mantine/core": "9.8.0",
@@ -23,6 +25,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",

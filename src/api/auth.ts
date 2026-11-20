@@ -5,8 +5,18 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { ApiError, apiFetch } from "./client";
-import type { Me } from "./types";
+import { ApiError } from "./client";
+import {
+  confirmPasswordReset,
+  getMe,
+  login,
+  logout,
+  requestPasswordReset,
+  resendVerificationEmail,
+  signup,
+  verifyEmail,
+  type Me,
+} from "./generated";
 
 export const meKeys = {
   all: ["me"] as const,
@@ -15,7 +25,8 @@ export const meKeys = {
 // Returns null when there is no session.
 export async function fetchMe(): Promise<Me | null> {
   try {
-    return await apiFetch<Me>("/auth/me");
+    const { data } = await getMe();
+    return data;
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) return null;
     throw error;
@@ -36,7 +47,7 @@ export function useSignup() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { email: string; password: string; name: string }) =>
-      apiFetch<Me>("/auth/signup", { json: input }),
+      signup({ body: input }).then(({ data }) => data),
     onSuccess: (me) => queryClient.setQueryData(meKeys.all, me),
   });
 }
@@ -45,7 +56,7 @@ export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { email: string; password: string }) =>
-      apiFetch<Me>("/auth/login", { json: input }),
+      login({ body: input }).then(({ data }) => data),
     onSuccess: (me) => queryClient.setQueryData(meKeys.all, me),
   });
 }
@@ -53,7 +64,7 @@ export function useLogin() {
 export function useLogout() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => apiFetch<null>("/auth/logout", { method: "POST" }),
+    mutationFn: () => logout().then(() => null),
     onSuccess: () => clearSession(queryClient),
   });
 }
@@ -61,21 +72,21 @@ export function useLogout() {
 export function useVerifyEmail() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: { token: string }) => apiFetch<null>("/auth/verify-email", { json: input }),
+    mutationFn: (input: { token: string }) => verifyEmail({ body: input }).then(() => null),
     onSuccess: () => refreshMeAfterSuccess(queryClient),
   });
 }
 
 export function useResendVerification() {
   return useMutation({
-    mutationFn: () => apiFetch<null>("/auth/verify-email/resend", { method: "POST" }),
+    mutationFn: () => resendVerificationEmail().then(() => null),
   });
 }
 
 export function useRequestPasswordReset() {
   return useMutation({
     mutationFn: (input: { email: string }) =>
-      apiFetch<null>("/auth/password-reset", { json: input }),
+      requestPasswordReset({ body: input }).then(() => null),
   });
 }
 
@@ -83,7 +94,7 @@ export function useConfirmPasswordReset() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: { token: string; password: string }) =>
-      apiFetch<null>("/auth/password-reset/confirm", { json: input }),
+      confirmPasswordReset({ body: input }).then(() => null),
     // The API deletes all sessions of the user.
     onSuccess: () => clearSession(queryClient),
   });

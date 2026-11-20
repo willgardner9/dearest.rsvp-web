@@ -22,4 +22,14 @@ describe("errors", () => {
     expect(errorCode(new ApiError(500, "oops"))).toBeNull();
     expect(errorCode(new Error("x"))).toBeNull();
   });
+
+  it("messages_cover_known_codes_and_fall_back", () => {
+    const fallback = "Something went wrong. Try again.";
+    expect(errorMessage(new ApiError(401, { error: "invalid_credentials" }))).toBe(
+      "The email or password is not correct.",
+    );
+    expect(errorMessage(new ApiError(400, { error: "not_a_real_code" }))).toBe(fallback);
+    expect(errorCode(new ApiError(400, { error: "not_a_real_code" }))).toBeNull();
+    expect(errorMessage(new ApiError(400, { message: "no error field" }))).toBe(fallback);
+  });
 });

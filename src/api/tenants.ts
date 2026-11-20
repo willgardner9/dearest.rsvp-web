@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { refreshMeAfterSuccess } from "./auth";
-import { apiFetch } from "./client";
-import type { Member, Tenant } from "./types";
+import { createTenant, getTenant, listMembers } from "./generated";
 
 export const tenantKeys = {
   all: ["tenants"] as const,
@@ -12,21 +11,30 @@ export const tenantKeys = {
 export function useTenant(tenantId: string) {
   return useQuery({
     queryKey: tenantKeys.detail(tenantId),
-    queryFn: () => apiFetch<Tenant>(`/tenants/${encodeURIComponent(tenantId)}`),
+    queryFn: async () => {
+      const { data } = await getTenant({ path: { tenant_id: tenantId } });
+      return data;
+    },
   });
 }
 
 export function useMembers(tenantId: string) {
   return useQuery({
     queryKey: tenantKeys.members(tenantId),
-    queryFn: () => apiFetch<Member[]>(`/tenants/${encodeURIComponent(tenantId)}/members`),
+    queryFn: async () => {
+      const { data } = await listMembers({ path: { tenant_id: tenantId } });
+      return data;
+    },
   });
 }
 
 export function useCreateTenant() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: { name: string }) => apiFetch<Tenant>("/tenants", { json: input }),
+    mutationFn: async (input: { name: string }) => {
+      const { data } = await createTenant({ body: input });
+      return data;
+    },
     onSuccess: () => refreshMeAfterSuccess(queryClient),
   });
 }

@@ -1,12 +1,23 @@
-import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { ApiError } from "./client";
+import { configureApiClient } from "./clientConfig";
 import { QueryClient, QueryObserver } from "@tanstack/react-query";
 import { clearSession, fetchMe, meKeys, meQueryOptions, refreshMe } from "./auth";
-import type { Me } from "./types";
+import type { Me } from "./generated";
 
 function mockFetch(response: Response) {
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response));
 }
+
+// The hooks call the generated client. It needs a base URL to build a Request.
+beforeEach(() => {
+  vi.stubEnv("VITE_API_BASE_URL", "http://api.test");
+  configureApiClient();
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 describe("fetchMe", () => {
   afterEach(() => {

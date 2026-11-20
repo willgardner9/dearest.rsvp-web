@@ -10,7 +10,7 @@ import {
   useLogout,
   useMe,
 } from "../api";
-import type { InvitePreview, Me } from "../api/types";
+import type { InvitePreview, Me } from "../api";
 import { AnchorLink } from "../components/AnchorLink";
 import { AuthCard } from "../components/AuthCard";
 
@@ -159,18 +159,15 @@ function AcceptButton({ token, invite }: { token: string; invite: InvitePreview 
   const accept = useAcceptInvite(token);
 
   const onAccept = () =>
-    accept.mutate(
-      {},
-      {
-        onSuccess: ({ tenant_id }) =>
-          void navigate({ to: "/w/$tenantId", params: { tenantId: tenant_id } }),
-        onError: (error) => {
-          if (errorCode(error) !== "already_member") return;
-          // The user is a member already. Open the wedding of this invite.
-          void navigate({ to: "/w/$tenantId", params: { tenantId: invite.tenant_id } });
-        },
+    accept.mutate(undefined, {
+      onSuccess: ({ tenant_id }) =>
+        void navigate({ to: "/w/$tenantId", params: { tenantId: tenant_id } }),
+      onError: (error) => {
+        if (errorCode(error) !== "already_member") return;
+        // The user is a member already. Open the wedding of this invite.
+        void navigate({ to: "/w/$tenantId", params: { tenantId: invite.tenant_id } });
       },
-    );
+    });
 
   return (
     <Stack>

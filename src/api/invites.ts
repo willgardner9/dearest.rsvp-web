@@ -1,31 +1,43 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { refreshMeAfterSuccess } from "./auth";
-import { apiFetch } from "./client";
-import type { Invite, InvitePreview } from "./types";
+import {
+  acceptInvite,
+  cancelInvite,
+  createInvite,
+  getInvitePreview,
+  listInvites,
+  type NewAccountBody,
+} from "./generated";
 
 export const inviteKeys = {
   list: (tenantId: string) => ["tenants", tenantId, "invites"] as const,
   preview: (token: string) => ["invites", token] as const,
 };
 
-function invitesPath(tenantId: string) {
-  return `/tenants/${encodeURIComponent(tenantId)}/invites`;
+export async function fetchInvites(tenantId: string) {
+  const { data } = await listInvites({ path: { tenant_id: tenantId } });
+  return data;
+}
+
+export async function fetchInvitePreview(token: string) {
+  const { data } = await getInvitePreview({ path: { token } });
+  return data;
 }
 
 export function useInvites(tenantId: string) {
   return useQuery({
     queryKey: inviteKeys.list(tenantId),
-    queryFn: () => apiFetch<Invite[]>(invitesPath(tenantId)),
+    queryFn: () => fetchInvites(tenantId),
   });
 }
 
 export function useCreateInvite(tenantId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: { email: string }) =>
-      apiFetch<{ id: string; email: string; expires_at: string }>(invitesPath(tenantId), {
-        json: input,
-      }),
+    mutationFn: async (input: { email: string }) => {
+      const { data } = await createInvite({ path: { tenant_id: tenantId }, body: input });
+      return data;
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: inviteKeys.list(tenantId) }),
   });
 }
@@ -34,9 +46,7 @@ export function useCancelInvite(tenantId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (inviteId: string) =>
-      apiFetch<null>(`${invitesPath(tenantId)}/${encodeURIComponent(inviteId)}`, {
-        method: "DELETE",
-      }),
+      cancelInvite({ path: { tenant_id: tenantId, invite_id: inviteId } }).then(() => null),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: inviteKeys.list(tenantId) }),
   });
 }
@@ -44,18 +54,21 @@ export function useCancelInvite(tenantId: string) {
 export function useInvitePreview(token: string) {
   return useQuery({
     queryKey: inviteKeys.preview(token),
-    queryFn: () => apiFetch<InvitePreview>(`/invites/${encodeURIComponent(token)}`),
+    queryFn: () => fetchInvitePreview(token),
     retry: false,
   });
+}
+
+// A signed-in user sends no body. A new user sends the name and the password.
+export async function acceptInviteRequest(token: string, input: NewAccountBody | undefined) {
+  const { data } = await acceptInvite({ path: { token }, body: input });
+  return data;
 }
 
 export function useAcceptInvite(token: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: { name?: string; password?: string }) =>
-      apiFetch<{ tenant_id: string }>(`/invites/${encodeURIComponent(token)}/accept`, {
-        json: input,
-      }),
+    mutationFn: (input: NewAccountBody | undefined) => acceptInviteRequest(token, input),
     onSuccess: () => refreshMeAfterSuccess(queryClient),
   });
 }

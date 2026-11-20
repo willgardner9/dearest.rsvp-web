@@ -1,17 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "./client";
+import { getHealth, type Health } from "./generated";
 
-export interface HealthResponse {
-  status: string;
-  db: string;
-}
+export type HealthResponse = Health;
 
 export const healthKeys = {
   all: ["health"] as const,
 };
 
-export function fetchHealth(): Promise<HealthResponse> {
-  return apiFetch<HealthResponse>("/health");
+export async function fetchHealth(): Promise<HealthResponse> {
+  const { data } = await getHealth();
+  return data;
 }
 
 // Manual query: it runs only when the caller runs `refetch`.
