@@ -1,7 +1,8 @@
-import { Alert, Button, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Stack, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { ApiError, errorCode, errorMessage, useRequestPasswordReset } from "../api";
 import { AnchorLink } from "../components/AnchorLink";
+import { AppAlert } from "../components/AppAlert";
 import { AuthCard } from "../components/AuthCard";
 
 export function ForgotPasswordPage() {
@@ -30,7 +31,11 @@ export function ForgotPasswordPage() {
       ) : (
         <form onSubmit={onSubmit}>
           <Stack>
-            {failed && <Alert color="red">{errorMessage(request.error)}</Alert>}
+            {failed && (
+              <AppAlert kind="error" title="Could not send the email">
+                {errorMessage(request.error)}
+              </AppAlert>
+            )}
             <TextInput
               label="Email"
               type="email"

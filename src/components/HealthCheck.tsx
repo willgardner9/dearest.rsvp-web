@@ -1,5 +1,6 @@
-import { Alert, Button, Code, Stack, Text } from "@mantine/core";
+import { Button, Code, Stack, Text } from "@mantine/core";
 import { ApiError, useHealth } from "../api";
+import { AppAlert } from "./AppAlert";
 
 export function HealthCheck() {
   const { data, error, isFetching, refetch } = useHealth();
@@ -11,13 +12,13 @@ export function HealthCheck() {
       </Button>
       {data && <Code block>{JSON.stringify(data, null, 2)}</Code>}
       {error && (
-        <Alert color="red" title="Request failed">
+        <AppAlert kind="error" title="Request failed">
           <Text size="sm">
             {error instanceof ApiError
               ? `HTTP ${error.status}: ${JSON.stringify(error.body)}`
               : error.message}
           </Text>
-        </Alert>
+        </AppAlert>
       )}
     </Stack>
   );

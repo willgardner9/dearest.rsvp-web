@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Alert,
   Button,
   Group,
   PasswordInput,
@@ -13,6 +12,7 @@ import { useForm } from "@mantine/form";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { errorCode, errorMessage, useSignup } from "../api";
 import { AnchorLink } from "../components/AnchorLink";
+import { AppAlert } from "../components/AppAlert";
 import { AuthCard } from "../components/AuthCard";
 
 const route = getRouteApi("/signup");
@@ -37,14 +37,24 @@ export function SignupPage() {
       <form onSubmit={onSubmit}>
         <Stack>
           {signup.isError && (
-            <Alert color="red">
-              {errorMessage(signup.error)}{" "}
+            <AppAlert
+              kind="error"
+              title="Could not create the account"
+              variant="outline"
+              withCloseButton
+              closeButtonLabel="Dismiss"
+              onClose={() => signup.reset()}
+            >
+              {errorMessage(signup.error)}
               {errorCode(signup.error) === "email_taken" && (
-                <AnchorLink to="/login" search={{ redirect }}>
-                  Log in
-                </AnchorLink>
+                <>
+                  {" "}
+                  <AnchorLink to="/login" search={{ redirect }} fz="inherit" fw={500}>
+                    Log in
+                  </AnchorLink>
+                </>
               )}
-            </Alert>
+            </AppAlert>
           )}
           <TextInput
             label={
