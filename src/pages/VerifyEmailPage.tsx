@@ -1,7 +1,8 @@
-import { Alert, Button, Group, Stack, Text } from "@mantine/core";
+import { Button, Group, Stack, Text } from "@mantine/core";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { errorMessage, useLogout, useMe, useResendVerification } from "../api";
+import { AppAlert } from "../components/AppAlert";
 import { AuthCard } from "../components/AuthCard";
 import { safeRedirect } from "../routing";
 
@@ -26,8 +27,16 @@ export function VerifyEmailPage() {
         <Text>
           We sent a link to <strong>{me?.user.email}</strong>. Open the link to verify your email.
         </Text>
-        {resend.isSuccess && <Alert color="green">Email sent.</Alert>}
-        {resend.isError && <Alert color="red">{errorMessage(resend.error)}</Alert>}
+        {resend.isSuccess && (
+          <AppAlert kind="success" title="Email sent">
+            Check your inbox.
+          </AppAlert>
+        )}
+        {resend.isError && (
+          <AppAlert kind="error" title="Could not send the email">
+            {errorMessage(resend.error)}
+          </AppAlert>
+        )}
         <Group>
           <Button onClick={() => resend.mutate()} loading={resend.isPending}>
             Send the email again

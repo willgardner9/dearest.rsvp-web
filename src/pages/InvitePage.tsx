@@ -1,4 +1,4 @@
-import { Alert, Button, Loader, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Loader, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import {
@@ -12,6 +12,7 @@ import {
 } from "../api";
 import type { InvitePreview, Me } from "../api";
 import { AnchorLink } from "../components/AnchorLink";
+import { AppAlert } from "../components/AppAlert";
 import { AuthCard } from "../components/AuthCard";
 
 const route = getRouteApi("/invite/$token");
@@ -122,14 +123,20 @@ function JoinForm({ token, invite }: { token: string; invite: InvitePreview }) {
       <Stack>
         {accept.isError &&
           (needsLogin ? (
-            <Alert color="red">
-              You already have an account.{" "}
-              <AnchorLink to="/login" search={{ redirect: `/invite/${token}` }}>
-                Log in to accept
+            <AppAlert kind="error" title="You already have an account">
+              <AnchorLink
+                to="/login"
+                search={{ redirect: `/invite/${token}` }}
+                fz="inherit"
+                fw={500}
+              >
+                Log in to accept the invite
               </AnchorLink>
-            </Alert>
+            </AppAlert>
           ) : (
-            <Alert color="red">{errorMessage(accept.error)}</Alert>
+            <AppAlert kind="error" title="Could not accept the invite">
+              {errorMessage(accept.error)}
+            </AppAlert>
           ))}
         <TextInput label="Email" value={invite.email} readOnly />
         <TextInput
@@ -172,7 +179,9 @@ function AcceptButton({ token, invite }: { token: string; invite: InvitePreview 
   return (
     <Stack>
       {accept.isError && errorCode(accept.error) !== "already_member" && (
-        <Alert color="red">{errorMessage(accept.error)}</Alert>
+        <AppAlert kind="error" title="Could not accept the invite">
+          {errorMessage(accept.error)}
+        </AppAlert>
       )}
       <Button onClick={onAccept} loading={accept.isPending}>
         Accept

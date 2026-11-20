@@ -1,8 +1,9 @@
-import { Alert, Button, PasswordInput, Stack } from "@mantine/core";
+import { Button, PasswordInput, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { errorCode, errorMessage, useConfirmPasswordReset } from "../api";
 import { AnchorLink } from "../components/AnchorLink";
+import { AppAlert } from "../components/AppAlert";
 import { AuthCard } from "../components/AuthCard";
 
 const route = getRouteApi("/reset-password");
@@ -25,12 +26,17 @@ export function ResetPasswordPage() {
       <form onSubmit={onSubmit}>
         <Stack>
           {confirm.isError && (
-            <Alert color="red">
-              {errorMessage(confirm.error)}{" "}
+            <AppAlert kind="error" title="Could not reset the password">
+              {errorMessage(confirm.error)}
               {errorCode(confirm.error) === "invalid_token" && (
-                <AnchorLink to="/forgot-password">Get a new link</AnchorLink>
+                <>
+                  {" "}
+                  <AnchorLink to="/forgot-password" fz="inherit" fw={500}>
+                    Get a new link
+                  </AnchorLink>
+                </>
               )}
-            </Alert>
+            </AppAlert>
           )}
           <PasswordInput
             label="New password"
