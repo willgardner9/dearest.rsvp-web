@@ -7,7 +7,7 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import { meKeys, meQueryOptions } from "./api/auth";
-import type { Me } from "./api/types";
+import type { Me } from "./api";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { InvitePage } from "./pages/InvitePage";
 import { LoginPage } from "./pages/LoginPage";

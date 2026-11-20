@@ -1,12 +1,12 @@
 import { Select } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
-import type { Membership } from "../api/types";
+import type { MembershipSummary } from "../api";
 
 export function TenantSwitcher({
   memberships,
   currentId,
 }: {
-  memberships: Membership[];
+  memberships: MembershipSummary[];
   currentId: string;
 }) {
   const navigate = useNavigate();

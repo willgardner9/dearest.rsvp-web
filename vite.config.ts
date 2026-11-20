@@ -10,6 +10,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    // The generator writes src/api/generated. Git does not track it.
+    // Do not format it.
+    fmt: {
+      ignorePatterns: ["src/api/generated/**"],
+    },
     server: {
       proxy: {
         "/api": {

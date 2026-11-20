@@ -130,3 +130,6 @@ dist
 .pnp.*
 
 .DS_Store
+
+# Made by `yarn api:generate` from the deployed API spec
+src/api/generated/

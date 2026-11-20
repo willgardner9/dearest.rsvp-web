@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
-import type { Me } from "./api/types";
+import type { Me } from "./api";
 import {
   afterVerifyTarget,
   readLastTenant,

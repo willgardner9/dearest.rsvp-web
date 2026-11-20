@@ -18,15 +18,60 @@ The last command turns on the Git hooks. Run it one time in each clone.
 
 ## Scripts
 
-| Command          | What it does                       |
-| ---------------- | ---------------------------------- |
-| `yarn dev`       | Start the dev server               |
-| `yarn build`     | Typecheck and build for production |
-| `yarn preview`   | Serve the production build         |
-| `yarn test`      | Run the unit tests                 |
-| `yarn typecheck` | Run the TypeScript check           |
-| `yarn fmt`       | Format the code                    |
-| `yarn fmt:check` | Check the format without a change  |
+| Command             | What it does                                                           |
+| ------------------- | ---------------------------------------------------------------------- |
+| `yarn dev`          | Start the dev server                                                   |
+| `yarn build`        | Typecheck and build for production                                     |
+| `yarn preview`      | Serve the production build                                             |
+| `yarn test`         | Run the unit tests                                                     |
+| `yarn typecheck`    | Run the TypeScript check                                               |
+| `yarn fmt`          | Format the code                                                        |
+| `yarn fmt:check`    | Check the format without a change                                      |
+| `yarn api:generate` | Make the API client in `src/api/generated/` from the deployed API spec |
+
+## API client
+
+The API sends its spec at `https://api.dearest.rsvp/openapi.json`.
+`@hey-api/openapi-ts` makes the client in `src/api/generated/` from that spec.
+Git does not track `src/api/generated/`. This repository keeps no copy of the spec.
+
+`yarn install` runs `yarn api:generate`, so a new clone has the client after the install.
+Run `yarn api:generate` again to get a new API version.
+Set `OPENAPI_URL` to read the spec from another API:
+
+```bash
+OPENAPI_URL=http://localhost:3000/openapi.json yarn api:generate
+```
+
+The client always matches the deployed API. Deploy the backend first. Then use the
+new API in this repository. A breaking change in the API makes `yarn typecheck`
+fail here, so the type error shows the change at once.
+
+`yarn install` and CI need network access to the deployed API. The install fails
+if the API is down. The `publish` job in the backend repository checks that the
+deployed spec is usable.
+
+The generated code is the same for each repository that reads the same spec.
+A new repository needs only the generator config and this URL.
+
+```mermaid
+flowchart LR
+    code["dearest.rsvp-api: Rust code"] --> spec["GET /openapi.json"]
+    spec --> live["api.dearest.rsvp"]
+    live --> gen["yarn install: yarn api:generate"]
+    gen --> client["src/api/generated/ (not in Git)"]
+    client --> app["dearest.rsvp-web"]
+```
+
+Use the hooks in `src/api/*.ts`. Do not use the generated query options in `src/api/generated/@tanstack/react-query.gen.ts`. The generated error type is `ErrorBody`, but the run-time error is `ApiError`.
+
+`src/api/clientConfig.ts` configures the client. `src/main.tsx` calls it one time.
+
+The generator needs the JavaScript API of TypeScript 6. TypeScript 7 does not
+have this API. `.yarnrc.yml` gives the generator a `typescript-6` package.
+`scripts/typescript-6-hooks.mjs` sends the generator imports to that package.
+The hook was tested with `@hey-api/openapi-ts` 0.99.0. Remove the hook and the
+`packageExtensions` entry in `.yarnrc.yml` when `@hey-api/openapi-ts` supports TypeScript 7.
 
 ## Environment variables
 
@@ -72,7 +117,7 @@ The API sends all email to Mailpit. Open the Mailpit UI at `http://localhost:802
 
 ## Project layout
 
-- `src/api/`: the API layer. `client.ts` has the fetch client. `errors.ts` maps API error codes to messages. Each other file has the calls and hooks for one resource.
+- `src/api/`: the API layer. `client.ts` has `ApiError` and `parseBody`. `errors.ts` maps API error codes to messages. Each other file has the calls and hooks for one resource.
 - `src/router.tsx`: the routes and the route guards.
 - `src/routing.ts`: the redirect rules. Unit tests cover them.
 - `src/pages/`: one component for each page.
@@ -86,4 +131,4 @@ To skip the hook one time, add `--no-verify` to the Git command.
 
 ## CI
 
-GitHub Actions runs the format check, the typecheck, the unit tests, and the build on each pull request and each push to `main`.
+GitHub Actions makes the API client, runs the format check, the typecheck, the unit tests, and the build on each pull request and each push to `main`.

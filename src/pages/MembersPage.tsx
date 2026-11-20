@@ -3,7 +3,7 @@ import { useForm } from "@mantine/form";
 import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
 import { errorMessage, useCancelInvite, useCreateInvite, useInvites, useMembers } from "../api";
-import type { Invite } from "../api/types";
+import type { Invite } from "../api";
 
 const route = getRouteApi("/w/$tenantId/members");
 
