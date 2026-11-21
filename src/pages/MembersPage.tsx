@@ -1,8 +1,9 @@
-import { Alert, Button, Group, Loader, Stack, Table, Text, TextInput, Title } from "@mantine/core";
+import { Button, Group, Loader, Stack, Table, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
 import { errorMessage, useCancelInvite, useCreateInvite, useInvites, useMembers } from "../api";
+import { AppAlert } from "../components/AppAlert";
 import type { Invite } from "../api";
 
 const route = getRouteApi("/w/$tenantId/members");
@@ -26,7 +27,11 @@ function MembersSection({ tenantId }: { tenantId: string }) {
         Members
       </Title>
       {isPending && <Loader />}
-      {isError && <Alert color="red">{errorMessage(error)}</Alert>}
+      {isError && (
+        <AppAlert kind="error" title="Could not load the members">
+          {errorMessage(error)}
+        </AppAlert>
+      )}
       {members && (
         <Table>
           <Table.Thead>
@@ -74,8 +79,16 @@ function InviteForm({ tenantId }: { tenantId: string }) {
       </Title>
       <form onSubmit={onSubmit}>
         <Stack>
-          {sentTo && <Alert color="green">Invite sent to {sentTo}.</Alert>}
-          {create.isError && <Alert color="red">{errorMessage(create.error)}</Alert>}
+          {sentTo && (
+            <AppAlert kind="success" title="Invite sent">
+              We sent the invite to {sentTo}.
+            </AppAlert>
+          )}
+          {create.isError && (
+            <AppAlert kind="error" title="Could not send the invite">
+              {errorMessage(create.error)}
+            </AppAlert>
+          )}
           <Group align="flex-end">
             <TextInput
               label="Email"

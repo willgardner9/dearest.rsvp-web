@@ -1,8 +1,9 @@
-import { Alert, Button, Group, PasswordInput, Stack, TextInput } from "@mantine/core";
+import { Button, Group, PasswordInput, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { errorMessage, useLogin } from "../api";
 import { AnchorLink } from "../components/AnchorLink";
+import { AppAlert } from "../components/AppAlert";
 import { AuthCard } from "../components/AuthCard";
 import { readLastTenant, resolveHome, safeRedirect } from "../routing";
 
@@ -31,9 +32,15 @@ export function LoginPage() {
       <form onSubmit={onSubmit}>
         <Stack>
           {reset && (
-            <Alert color="green">Your password is changed. Log in with the new password.</Alert>
+            <AppAlert kind="success" title="Password changed">
+              Log in with the new password.
+            </AppAlert>
           )}
-          {login.isError && <Alert color="red">{errorMessage(login.error)}</Alert>}
+          {login.isError && (
+            <AppAlert kind="error" title="Could not log in">
+              {errorMessage(login.error)}
+            </AppAlert>
+          )}
           <TextInput
             label="Email"
             type="email"

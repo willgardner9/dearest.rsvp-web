@@ -608,6 +608,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@phosphor-icons/react@npm:^2.1.10":
+  version: 2.1.10
+  resolution: "@phosphor-icons/react@npm:2.1.10"
+  peerDependencies:
+    react: ">= 16.8"
+    react-dom: ">= 16.8"
+  checksum: 10c0/9a469e1bdcabcd3db02eda13142d57be250847ebbeb82b33c8900580a6a23ed4f411dbb9b9deacef726ff3fa8ffc960c8868b518e448bd2cee654cedf3fa4bda
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -1596,6 +1606,7 @@ __metadata:
     "@mantine/core": "npm:9.8.1"
     "@mantine/form": "npm:9.8.1"
     "@mantine/hooks": "npm:9.8.1"
+    "@phosphor-icons/react": "npm:^2.1.10"
     "@tanstack/react-query": "npm:^5.108.0"
     "@tanstack/react-router": "npm:^1.170.46"
     "@types/react": "npm:^19.3.0"

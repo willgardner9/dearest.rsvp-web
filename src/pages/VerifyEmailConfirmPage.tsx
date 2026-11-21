@@ -1,8 +1,9 @@
-import { Alert, Button, Loader, Stack, Text } from "@mantine/core";
+import { Button, Loader, Stack, Text } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ApiError, errorCode, errorMessage, meQueryOptions, useVerifyEmail } from "../api";
+import { AppAlert } from "../components/AppAlert";
 import { AuthCard } from "../components/AuthCard";
 import { afterVerifyTarget } from "../routing";
 
@@ -70,9 +71,9 @@ export function VerifyEmailConfirmPage() {
   return (
     <AuthCard title="We could not verify your email">
       <Stack>
-        <Alert color="red">
+        <AppAlert kind="error" title="Could not verify the email">
           <Text size="sm">{errorMessage(outcome.error)}</Text>
-        </Alert>
+        </AppAlert>
         <Button onClick={go}>Continue</Button>
       </Stack>
     </AuthCard>
