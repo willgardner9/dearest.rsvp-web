@@ -1,6 +1,7 @@
-import { Loader, Stack, Text, Title } from "@mantine/core";
+import { Loader, Stack, Title } from "@mantine/core";
 import { getRouteApi } from "@tanstack/react-router";
 import { useTenant } from "../api";
+import { WeddingGuide } from "../components/WeddingGuide";
 
 const route = getRouteApi("/w/$tenantId/");
 
@@ -12,7 +13,7 @@ export function WeddingHomePage() {
   return (
     <Stack>
       <Title order={2}>{tenant?.name}</Title>
-      <Text>More is coming soon.</Text>
+      <WeddingGuide />
     </Stack>
   );
 }
