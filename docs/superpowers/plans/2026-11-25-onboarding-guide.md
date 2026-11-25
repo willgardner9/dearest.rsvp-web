@@ -1,5 +1,7 @@
 # Onboarding Guide (Web) Implementation Plan
 
+> **Update (2026-11-25):** After this plan was carried out, the spec changed from three steps to six steps in three groups, with "Needs" lines. The commit "feat: group the onboarding guide steps" carries that change. The spec is the authority for the current content; the copy in Task 1 below is the first version.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace "More is coming soon." on the wedding home page with a static guide that explains the three optional steps and the example paths.
