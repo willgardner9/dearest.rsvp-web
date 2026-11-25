@@ -1,9 +1,21 @@
-import { AppShell, Avatar, Group, Menu, Text, Title, UnstyledButton } from "@mantine/core";
-import { getRouteApi, Outlet, useNavigate } from "@tanstack/react-router";
+import {
+  AppShell,
+  Avatar,
+  Burger,
+  Combobox,
+  Group,
+  Image,
+  Menu,
+  Text,
+  UnstyledButton,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { HouseIcon, UsersIcon } from "@phosphor-icons/react";
+import { Link, getRouteApi, Outlet, useNavigate } from "@tanstack/react-router";
 import { useLogout, useMe } from "../api";
 import { showSwitcher } from "../routing";
-import { AnchorLink } from "./AnchorLink";
-import { TenantSwitcher } from "./TenantSwitcher";
+import { NavItemLink } from "./NavItemLink";
+import classes from "./WeddingLayout.module.css";
 
 const route = getRouteApi("/w/$tenantId");
 
@@ -12,37 +24,100 @@ export function WeddingLayout() {
   const navigate = useNavigate();
   const { data: me } = useMe();
   const logout = useLogout();
-  const current = me?.memberships.find((m) => m.tenant_id === tenantId);
+  const [opened, { toggle, close }] = useDisclosure();
 
   return (
-    <AppShell header={{ height: 64 }} padding="md">
+    <AppShell
+      header={{ height: 64 }}
+      navbar={{ width: 260, breakpoint: "sm", collapsed: { mobile: !opened } }}
+      padding="md"
+    >
       <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between" wrap="nowrap">
-          <Group wrap="nowrap" gap="lg">
-            <Title order={4} lineClamp={1}>
-              {current?.tenant_name}
-            </Title>
-            {me && showSwitcher(me) && (
-              <TenantSwitcher memberships={me.memberships} currentId={tenantId} />
-            )}
-            <AnchorLink to="/w/$tenantId/members" params={{ tenantId }}>
-              Members
-            </AnchorLink>
-          </Group>
-          <Menu position="bottom-end">
+        <Group h="100%" px="md" wrap="nowrap">
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            hiddenFrom="sm"
+            size="sm"
+            aria-label="Toggle navigation"
+          />
+          <Link to="/" aria-label="Dearest home" style={{ display: "flex" }}>
+            <Image src="/dearest-color.svg" alt="Dearest" h={20} w="auto" />
+          </Link>
+        </Group>
+      </AppShell.Header>
+
+      <AppShell.Navbar bg="white">
+        <AppShell.Section grow p="md">
+          <NavItemLink
+            to="/w/$tenantId"
+            params={{ tenantId }}
+            label="Home"
+            leftSection={<HouseIcon size={18} />}
+            classNames={{ root: classes.navItem, section: classes.navIcon }}
+            activeOptions={{ exact: true }}
+            activeProps={{ active: true }}
+            onClick={close}
+          />
+          <Text size="xs" fw={600} c="dimmed" tt="uppercase" mt="lg" mb="xs" px="sm">
+            Settings
+          </Text>
+          <NavItemLink
+            to="/w/$tenantId/members"
+            params={{ tenantId }}
+            label="Members"
+            leftSection={<UsersIcon size={18} />}
+            classNames={{ root: classes.navItem, section: classes.navIcon }}
+            activeProps={{ active: true }}
+            onClick={close}
+          />
+        </AppShell.Section>
+
+        <AppShell.Section p="xs" style={{ borderTop: "1px solid var(--mantine-color-stone-2)" }}>
+          <Menu position="top-start" width={220}>
             <Menu.Target>
-              <UnstyledButton aria-label="User menu">
-                <Avatar name={me?.user.name} color="initials" />
+              <UnstyledButton aria-label="User menu" className={classes.userButton}>
+                <Group wrap="nowrap" gap="xs">
+                  <Avatar
+                    size="sm"
+                    name={me?.user.name}
+                    color="rose"
+                    variant="light"
+                    styles={{ placeholder: { color: "var(--mantine-color-rose-9)" } }}
+                  />
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <Text size="sm" fw={500} truncate>
+                      {me?.user.name}
+                    </Text>
+                    <Text size="xs" c="dimmed" truncate>
+                      {me?.user.email}
+                    </Text>
+                  </div>
+                  <Combobox.Chevron />
+                </Group>
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Label>
-                <Text size="sm" fw={500}>
-                  {me?.user.name}
-                </Text>
-                <Text size="xs">{me?.user.email}</Text>
-              </Menu.Label>
-              <Menu.Divider />
+              {me && showSwitcher(me) && (
+                <>
+                  <Menu.Label>Weddings</Menu.Label>
+                  {me.memberships.map((m) => (
+                    <Menu.Item
+                      key={m.tenant_id}
+                      fw={m.tenant_id === tenantId ? 600 : undefined}
+                      rightSection={m.tenant_id === tenantId ? "✓" : undefined}
+                      onClick={() => {
+                        if (m.tenant_id !== tenantId) {
+                          void navigate({ to: "/w/$tenantId", params: { tenantId: m.tenant_id } });
+                        }
+                      }}
+                    >
+                      {m.tenant_name}
+                    </Menu.Item>
+                  ))}
+                  <Menu.Divider />
+                </>
+              )}
               <Menu.Item
                 onClick={() =>
                   logout.mutate(undefined, { onSuccess: () => void navigate({ href: "/login" }) })
@@ -52,8 +127,9 @@ export function WeddingLayout() {
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
-        </Group>
-      </AppShell.Header>
+        </AppShell.Section>
+      </AppShell.Navbar>
+
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>

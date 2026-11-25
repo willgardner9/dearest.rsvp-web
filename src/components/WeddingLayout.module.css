@@ -1,0 +1,32 @@
+.userButton {
+  display: block;
+  width: 100%;
+  padding: 6px var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-md);
+
+  @mixin hover {
+    background-color: var(--mantine-color-stone-1);
+  }
+
+  &[data-expanded] {
+    background-color: var(--mantine-color-stone-1);
+  }
+}
+
+.navItem {
+  border-radius: var(--mantine-radius-md);
+
+  &:not([data-active]) .navIcon {
+    color: var(--mantine-color-stone-5);
+  }
+
+  &[data-active] {
+    --nl-bg: var(--mantine-color-stone-1);
+    --nl-hover: var(--mantine-color-stone-1);
+    --nl-color: var(--mantine-color-stone-9);
+  }
+
+  &[data-active] .navIcon {
+    color: var(--mantine-color-rose-9);
+  }
+}
