@@ -1,19 +1,25 @@
 import {
   AppShell,
   Avatar,
+  Badge,
   Burger,
   Combobox,
+  Divider,
   Group,
   Image,
   Menu,
+  NavLink,
   Text,
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { HouseIcon, UsersIcon } from "@phosphor-icons/react";
+import { GlobeIcon, HouseIcon, UsersIcon } from "@phosphor-icons/react";
 import { Link, getRouteApi, Outlet, useNavigate } from "@tanstack/react-router";
 import { useLogout, useMe } from "../api";
+import { GUIDE_GROUPS } from "../onboarding/guideContent";
+import { STEP_ICONS } from "../onboarding/stepIcons";
 import { showSwitcher } from "../routing";
+import { weddingSlug } from "../slug";
 import { NavItemLink } from "./NavItemLink";
 import classes from "./WeddingLayout.module.css";
 
@@ -25,6 +31,8 @@ export function WeddingLayout() {
   const { data: me } = useMe();
   const logout = useLogout();
   const [opened, { toggle, close }] = useDisclosure();
+  const current = me?.memberships.find((m) => m.tenant_id === tenantId);
+  const slug = current ? weddingSlug(current.tenant_name) : "";
 
   return (
     <AppShell
@@ -41,9 +49,33 @@ export function WeddingLayout() {
             size="sm"
             aria-label="Toggle navigation"
           />
-          <Link to="/" aria-label="Dearest home" style={{ display: "flex" }}>
-            <Image src="/dearest-color.svg" alt="Dearest" h={20} w="auto" />
-          </Link>
+          <Group gap="md" wrap="nowrap" align="center" style={{ minWidth: 0 }}>
+            <Link to="/" aria-label="Dearest home" style={{ display: "flex", flexShrink: 0 }}>
+              <Image src="/dearest-color.svg" alt="Dearest" h={20} w="auto" />
+            </Link>
+            {/* The address of the wedding website. It also shows a planner which wedding is open. */}
+            {slug && (
+              <>
+                <Divider orientation="vertical" h={20} style={{ alignSelf: "center" }} />
+                <Group
+                  gap={6}
+                  wrap="nowrap"
+                  className={classes.address}
+                  title={current?.tenant_name}
+                >
+                  <GlobeIcon size={14} aria-hidden style={{ flexShrink: 0 }} />
+                  <Text size="sm" truncate>
+                    <Text span c="dimmed" inherit>
+                      /to/
+                    </Text>
+                    <Text span fw={500} inherit>
+                      {slug}
+                    </Text>
+                  </Text>
+                </Group>
+              </>
+            )}
+          </Group>
         </Group>
       </AppShell.Header>
 
@@ -59,6 +91,33 @@ export function WeddingLayout() {
             activeProps={{ active: true }}
             onClick={close}
           />
+          {GUIDE_GROUPS.map((group) => (
+            <div key={group.id}>
+              <Text size="xs" fw={600} c="dimmed" tt="uppercase" mt="lg" mb="xs" px="sm">
+                {group.navTitle}
+              </Text>
+              {group.steps.map((step) => {
+                const StepIcon = STEP_ICONS[step.id];
+                // Not a link until the feature ships. A div is not focusable, so a keyboard user skips it.
+                return (
+                  <NavLink
+                    key={step.id}
+                    component="div"
+                    disabled
+                    aria-disabled
+                    label={step.navLabel}
+                    leftSection={<StepIcon size={18} />}
+                    rightSection={
+                      <Badge variant="light" color="stone" size="xs">
+                        Soon
+                      </Badge>
+                    }
+                    classNames={{ root: classes.navItem, section: classes.navIcon }}
+                  />
+                );
+              })}
+            </div>
+          ))}
           <Text size="xs" fw={600} c="dimmed" tt="uppercase" mt="lg" mb="xs" px="sm">
             Settings
           </Text>
