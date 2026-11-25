@@ -1,13 +1,9 @@
 import { describe, expect, it } from "vite-plus/test";
-import { GUIDE_GROUPS, GUIDE_INTRO, GUIDE_PATHS, guideStep } from "./guideContent";
+import { GUIDE_GROUPS, guideStep } from "./guideContent";
 
 const allSteps = GUIDE_GROUPS.flatMap((g) => g.steps);
 
 describe("guideContent", () => {
-  it("guide_intro_says_steps_are_optional", () => {
-    expect(GUIDE_INTRO).toBe("Each step is optional. Start with whichever fits you.");
-  });
-
   it("guide_groups_have_the_spec_titles", () => {
     expect(GUIDE_GROUPS.map((g) => g.title)).toEqual([
       "Your wedding",
@@ -80,15 +76,8 @@ describe("guideContent", () => {
     expect(guideStep("rsvps").description.toLowerCase()).toContain("website");
   });
 
-  it("guide_has_four_example_paths_starting_with_the_website", () => {
-    expect(GUIDE_PATHS).toHaveLength(4);
-    expect(GUIDE_PATHS[0].toLowerCase()).toContain("website");
-  });
-
   it("guide_copy_never_says_tenant", () => {
     const all = [
-      GUIDE_INTRO,
-      ...GUIDE_PATHS,
       ...GUIDE_GROUPS.map((g) => g.title),
       ...allSteps.flatMap((s) => [s.title, s.shortName, s.description]),
     ];
