@@ -24,8 +24,6 @@ export type GuideGroup = {
   steps: readonly GuideStep[];
 };
 
-export const GUIDE_INTRO = "Each step is optional. Start with whichever fits you.";
-
 export const GUIDE_GROUPS: readonly GuideGroup[] = [
   {
     id: "wedding",
@@ -92,13 +90,6 @@ export const GUIDE_GROUPS: readonly GuideGroup[] = [
       },
     ],
   },
-];
-
-export const GUIDE_PATHS: readonly string[] = [
-  "Put up a website first, then do the rest later.",
-  "Import guests, then send RSVP requests.",
-  "Import guests, send save the dates, then send RSVP requests months later.",
-  "Collect contact details, send save the dates, then send RSVP requests.",
 ];
 
 export function guideStep(id: GuideStepId): GuideStep {
