@@ -137,6 +137,8 @@ These decisions come from the conversation with the product owner.
 12. The API trusts calls from the `sites` container on the Docker network.
     No shared secret.
 13. No photos and no object storage in the first release.
+14. Block changes are add-only. A new block type or a one-off rewrite
+    script is the escape route. The first release builds neither.
 
 ## Design
 
@@ -164,10 +166,8 @@ Each block type exports one object:
 ```ts
 type BlockDefinition<Content> = {
   type: string; // for example "text"
-  version: number; // content shape version
-  schema: Schema<Content>; // validates content
+  schema: Schema<Content>; // validates content, fills defaults for missing fields
   defaults: Content; // content for a new block
-  migrate: (old: unknown, fromVersion: number) => Content;
   Component: (props: { content: Content }) => JSX.Element;
   interactive?: boolean; // true if the block needs client JavaScript
 };
@@ -199,20 +199,35 @@ First block:
 
 The rich text is a small structured format, not raw HTML.
 
-### Block versions and `migrate`
+### Changes to a block: add only
 
-When a block's content shape changes, the block gets a new version number
-and its `migrate` function turns old content into the new shape. Example:
+A block has no version number and no migrate function. Instead, every
+change to a block's content shape follows one rule:
 
-- Text v1 content is `{ body }`.
-- Text v2 adds a heading: `{ heading, body }`.
-- `migrate(old, 1)` returns `{ heading: "", body: old.body }`.
+- Add a field. Give it a default in the schema (for example
+  `.default("left")`).
+- Do not rename a field. Do not remove a field. Do not change the type of a
+  field.
 
-The stored documents keep the old version. Each read (a render in `sites`
-or a load in the builder) runs `migrate`. When the couple saves, the new
-version goes to the database. So no database migration over all sites is
-necessary, and old published sites do not break. A change that only adds an
-optional field needs no new version.
+When `sites` or the builder reads old content, the schema fills each
+missing field with its default. So old published sites do not break, and
+no code for old shapes builds up.
+
+Example: the Text block gets an `align` field. The schema says
+`align: enum(["left", "center"]).default("left")`. Old Text blocks render
+left-aligned. No other change is necessary.
+
+Escape routes for a change that cannot follow the rule. The first release
+builds neither of them. They are here so that the rule never traps us:
+
+1. Make a new block type (for example `text-2`). Hide the old type from the
+   "Add block" menu. Old blocks keep the old type and keep working.
+2. Write a one-off script that rewrites every `draft` and `published`
+   document in Postgres to the new shape, and run it at deploy time, like a
+   database migration. Delete the script after it runs.
+
+A field that is no longer used stays in the schema, marked as deprecated,
+until a rewrite script (route 2) removes it from the data.
 
 ### Site document
 
@@ -227,7 +242,7 @@ type SiteDocument = {
     kind: "gate" | "page";
     slug: string; // "" for the home page, unique within the site
     title: string;
-    blocks: Array<{ id: string; type: string; version: number; content: unknown }>;
+    blocks: Array<{ id: string; type: string; content: unknown }>;
   }>;
 };
 ```
@@ -326,8 +341,9 @@ Request flow for `GET /to/<slug>/<page>`:
 2. If the slug does not exist or the site is not published, return `404`.
 3. If the level is `password` and the gate cookie does not equal the
    current password, render the gate page.
-4. Migrate each block to its current version, then render the page to HTML
-   with `renderToReadableStream` (React's streaming server render).
+4. Parse each block with its schema (this fills defaults for missing
+   fields), then render the page to HTML with `renderToReadableStream`
+   (React's streaming server render).
 5. Add the client JavaScript only for interactive blocks on the page.
 
 Gate form:
