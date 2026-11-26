@@ -232,6 +232,12 @@ type SiteDocument = {
 };
 ```
 
+- `kind` marks a page that has a special job. The first release has
+  `gate` and `page`. Later features can add more kinds, for example `rsvp`
+  or `contact` for pages that collect data from guests with a special
+  form. A special kind can add its own part to `<SitePage>` (like the
+  password form on the gate page) and its own rules in the builder (for
+  example "only one per site"). An unknown kind renders as a normal page.
 - Each document has exactly one `gate` page. The builder makes it when it
   makes the site. The couple cannot delete it.
 - The order of the `page` pages is the navigation order. The gate page is
