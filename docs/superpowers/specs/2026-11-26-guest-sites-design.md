@@ -431,5 +431,22 @@ Measured on a mid-range Android phone on 4G (Lighthouse mobile profile):
 - The drag-and-drop library.
 - The theme presets and the font pairs (with product owner review).
 - When the API makes the `sites` row, and the default slug.
-- The order of the work. Suggested order: workspace move, block library,
-  API tables and endpoints, `sites`, builder and preview, deploy.
+
+## Delivery slices
+
+The work ships as thin vertical slices. Each slice has its own plan, its
+own PRs, and a result that a person can test in production. Each slice
+builds on the one before it.
+
+| Slice                     | Result that a person can test                                                                                                                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0. Workspaces             | The repository has `apps/app` and `packages/`. The builder works and deploys as before. No change for users.                                                                                                           |
+| 1. Site on the internet   | The couple sets a slug in the builder. `dearest.rsvp/to/<slug>` shows the couple's names from a default document. Covers the `sites` table, the internal port, `apps/sites`, the `sites` image, and the Traefik route. |
+| 2. Text block and publish | The couple adds, edits, removes and reorders Text blocks on the home page, and publishes. Guests see the change. Covers `packages/blocks`, draft save with `409`, and publish. No preview yet.                         |
+| 3. Live preview           | The builder shows the draft in an iframe, with phone, tablet and desktop widths.                                                                                                                                       |
+| 4. Pages                  | The couple adds, renames, removes and reorders pages. The site has navigation and page URLs.                                                                                                                           |
+| 5. Theme                  | The couple picks a preset, colours and a font pair. Self-hosted fonts.                                                                                                                                                 |
+| 6. Password gate          | The couple sets a password. The gate page (`kind: "gate"`) shows to visitors without the cookie.                                                                                                                       |
+| 7. Link previews          | `tenants.wedding_date` and the wedding settings field. Open Graph tags on every page.                                                                                                                                  |
+
+Slices 3 to 7 depend only on slice 2, so their order can change.
