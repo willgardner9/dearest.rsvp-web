@@ -26,14 +26,22 @@ The last command turns on the Git hooks. Run it one time in each clone.
 ## Update an old clone
 
 The app moved to `apps/app/`. After you pull this change into an old clone, the old build files stay at the root.
-The old `src/` folder holds only the old API client. `yarn fmt:check` and the pre-commit hook fail while it exists.
+The old API client stays in `src/api/generated/`. `yarn fmt:check` and the pre-commit hook fail while it exists.
 
-**Warning:** The next command deletes `src/` and `dist/` at the root. Before you run it, pull the change.
-Then make sure that `git status` shows no work of your own in `src/`.
+Pull the change. Then delete the old API client and the old build output:
 
 ```bash
-rm -rf src dist
+rm -rf src/api/generated dist
 ```
+
+Delete the empty folders. This command does not delete a file:
+
+```bash
+find src -depth -type d -empty -delete
+```
+
+If `src/` stays, it holds other files. Run `find src -type f` to see them.
+Move your own files to `apps/app/src/`. Delete a `.DS_Store` file. Then run the last command again.
 
 Move your `.env.local` files to `apps/app/`, if you have them. Then run `yarn install`.
 
