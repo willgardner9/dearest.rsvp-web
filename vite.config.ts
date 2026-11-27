@@ -1,28 +1,9 @@
-import { defineConfig, loadEnv } from "vite-plus";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite-plus";
 
-// https://viteplus.dev/config/
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "");
-  // Local dev: the browser calls /api. Vite forwards the call to the API
-  // and removes the /api prefix. This avoids CORS in local dev.
-  const proxyTarget = env.DEV_API_PROXY_TARGET || "http://localhost:3000";
-
-  return {
-    plugins: [react()],
-    // The generator writes src/api/generated. Git does not track it.
-    // Do not format it.
-    fmt: {
-      ignorePatterns: ["src/api/generated/**"],
-    },
-    server: {
-      proxy: {
-        "/api": {
-          target: proxyTarget,
-          changeOrigin: true,
-          rewrite: (path: string) => path.replace(/^\/api/, ""),
-        },
-      },
-    },
-  };
+// Settings for the commands that run from the repository root.
+export default defineConfig({
+  fmt: {
+    // The generator writes this folder. Git does not track it. Do not format it.
+    ignorePatterns: ["apps/app/src/api/generated/**"],
+  },
 });
