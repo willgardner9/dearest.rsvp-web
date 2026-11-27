@@ -1,5 +1,7 @@
 # Workspaces (Guest Sites Slice 0) Implementation Plan
 
+> **Update (2026-11-27):** The final review found that `rm -rf src dist` can delete files of a developer, because `git status` does not list them. The README now uses safe commands. The README is the authority for the "Update an old clone" text. Do not use the text in Task 3, Step 1.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Move the builder to `apps/app` in a yarn workspaces repository. Users see no change.
