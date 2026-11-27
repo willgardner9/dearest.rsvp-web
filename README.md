@@ -4,6 +4,13 @@ The web frontend for the dearest application. It uses React, Mantine, TanStack Q
 
 The API is in the `dearest.rsvp-api` repository. The deployed API is `https://api.dearest.rsvp`.
 
+## Repository layout
+
+The repository uses yarn workspaces. Run all commands from the root.
+
+- `apps/app/`: the builder. This is the app that couples use. Its `Dockerfile`, `nginx.conf` and `openapi-ts.config.ts` are in this folder.
+- `packages/`: shared packages. The folder is empty now. The Text block slice of the guest sites design adds the first package.
+
 ## Setup
 
 Use Node 24. The `.nvmrc` file has the version. Yarn comes from Corepack.
@@ -16,24 +23,38 @@ git config core.hooksPath .githooks
 
 The last command turns on the Git hooks. Run it one time in each clone.
 
+## Update an old clone
+
+The app moved to `apps/app/`. After you pull this change into an old clone, the old build files stay at the root.
+The old `src/` folder holds only the old API client. `yarn fmt:check` and the pre-commit hook fail while it exists.
+
+**Warning:** The next command deletes `src/` and `dist/` at the root. Before you run it, pull the change.
+Then make sure that `git status` shows no work of your own in `src/`.
+
+```bash
+rm -rf src dist
+```
+
+Move your `.env.local` files to `apps/app/`, if you have them. Then run `yarn install`.
+
 ## Scripts
 
-| Command             | What it does                                                           |
-| ------------------- | ---------------------------------------------------------------------- |
-| `yarn dev`          | Start the dev server                                                   |
-| `yarn build`        | Typecheck and build for production                                     |
-| `yarn preview`      | Serve the production build                                             |
-| `yarn test`         | Run the unit tests                                                     |
-| `yarn typecheck`    | Run the TypeScript check                                               |
-| `yarn fmt`          | Format the code                                                        |
-| `yarn fmt:check`    | Check the format without a change                                      |
-| `yarn api:generate` | Make the API client in `src/api/generated/` from the deployed API spec |
+| Command             | What it does                                                                    |
+| ------------------- | ------------------------------------------------------------------------------- |
+| `yarn dev`          | Start the dev server                                                            |
+| `yarn build`        | Typecheck and build for production                                              |
+| `yarn preview`      | Serve the production build                                                      |
+| `yarn test`         | Run the unit tests                                                              |
+| `yarn typecheck`    | Run the TypeScript check                                                        |
+| `yarn fmt`          | Format the code                                                                 |
+| `yarn fmt:check`    | Check the format without a change                                               |
+| `yarn api:generate` | Make the API client in `apps/app/src/api/generated/` from the deployed API spec |
 
 ## API client
 
 The API sends its spec at `https://api.dearest.rsvp/openapi.json`.
-`@hey-api/openapi-ts` makes the client in `src/api/generated/` from that spec.
-Git does not track `src/api/generated/`. This repository keeps no copy of the spec.
+`@hey-api/openapi-ts` makes the client in `apps/app/src/api/generated/` from that spec.
+Git does not track `apps/app/src/api/generated/`. This repository keeps no copy of the spec.
 
 `yarn install` runs `yarn api:generate`, so a new clone has the client after the install.
 Run `yarn api:generate` again to get a new API version.
@@ -59,17 +80,17 @@ flowchart LR
     code["dearest.rsvp-api: Rust code"] --> spec["GET /openapi.json"]
     spec --> live["api.dearest.rsvp"]
     live --> gen["yarn install: yarn api:generate"]
-    gen --> client["src/api/generated/ (not in Git)"]
+    gen --> client["apps/app/src/api/generated/ (not in Git)"]
     client --> app["dearest.rsvp-web"]
 ```
 
-Use the hooks in `src/api/*.ts`. Do not use the generated query options in `src/api/generated/@tanstack/react-query.gen.ts`. The generated error type is `ErrorBody`, but the run-time error is `ApiError`.
+Use the hooks in `apps/app/src/api/*.ts`. Do not use the generated query options in `apps/app/src/api/generated/@tanstack/react-query.gen.ts`. The generated error type is `ErrorBody`, but the run-time error is `ApiError`.
 
-`src/api/clientConfig.ts` configures the client. `src/main.tsx` calls it one time.
+`apps/app/src/api/clientConfig.ts` configures the client. `apps/app/src/main.tsx` calls it one time.
 
 The generator needs the JavaScript API of TypeScript 6. TypeScript 7 does not
 have this API. `.yarnrc.yml` gives the generator a `typescript-6` package.
-`scripts/typescript-6-hooks.mjs` sends the generator imports to that package.
+`apps/app/scripts/typescript-6-hooks.mjs` sends the generator imports to that package.
 The hook was tested with `@hey-api/openapi-ts` 0.99.0. Remove the hook and the
 `packageExtensions` entry in `.yarnrc.yml` when `@hey-api/openapi-ts` supports TypeScript 7.
 
@@ -80,7 +101,7 @@ The hook was tested with `@hey-api/openapi-ts` 0.99.0. Remove the hook and the
 | `VITE_API_BASE_URL`    | Browser code | Base URL for API calls                                     |
 | `DEV_API_PROXY_TARGET` | Dev server   | Where Vite sends `/api` calls. Default is `localhost:3000` |
 
-`.env.development` and `.env.production` have the default values.
+`apps/app/.env.development` and `apps/app/.env.production` have the default values.
 In development, the browser calls `/api`. Vite removes the `/api` prefix and forwards the call to `DEV_API_PROXY_TARGET`.
 This avoids CORS in development.
 In production, the browser calls `https://api.dearest.rsvp` directly. The API must allow the frontend origin with CORS.
@@ -115,14 +136,14 @@ docker compose up --build
 This starts the API on `localhost:3000`, Postgres, and Mailpit. Then run `yarn dev` here.
 The API sends all email to Mailpit. Open the Mailpit UI at `http://localhost:8025` to read the verification, reset, and invite emails.
 
-## Project layout
+## App layout
 
-- `src/api/`: the API layer. `client.ts` has `ApiError` and `parseBody`. `errors.ts` maps API error codes to messages. Each other file has the calls and hooks for one resource.
-- `src/router.tsx`: the routes and the route guards.
-- `src/routing.ts`: the redirect rules. Unit tests cover them.
-- `src/pages/`: one component for each page.
-- `src/components/`: shared React components.
-- `src/queryClient.ts`: the TanStack Query client.
+- `apps/app/src/api/`: the API layer. `client.ts` has `ApiError` and `parseBody`. `errors.ts` maps API error codes to messages. Each other file has the calls and hooks for one resource.
+- `apps/app/src/router.tsx`: the routes and the route guards.
+- `apps/app/src/routing.ts`: the redirect rules. Unit tests cover them.
+- `apps/app/src/pages/`: one component for each page.
+- `apps/app/src/components/`: shared React components.
+- `apps/app/src/queryClient.ts`: the TanStack Query client.
 
 ## Git hooks
 
