@@ -19,6 +19,6 @@ updates:
         patterns: ["*"]
 
   - package-ecosystem: docker
-    directory: /
+    directory: /apps/app
     schedule:
       interval: weekly
