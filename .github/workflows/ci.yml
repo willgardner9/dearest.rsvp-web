@@ -33,7 +33,7 @@ jobs:
           cache: yarn
 
       # The install step runs `yarn api:generate`. It reads the spec from the
-      # deployed API and makes src/api/generated/. The step fails if the API
+      # deployed API and makes apps/app/src/api/generated/. The step fails if the API
       # is down or sends a spec that the generator cannot read.
       - run: yarn install --immutable
 
@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: dist
-          path: dist
+          path: apps/app/dist
           retention-days: 1
 
   deploy:
@@ -77,7 +77,7 @@ jobs:
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: dist
-          path: dist
+          path: apps/app/dist
 
       # docker/setup-buildx-action v4.4.1
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
@@ -92,7 +92,7 @@ jobs:
       # docker/build-push-action v7.4.0
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
         with:
-          context: .
+          context: apps/app
           push: true
           tags: |
             ${{ env.IMAGE }}:latest
