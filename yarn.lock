@@ -42,16 +42,16 @@ __metadata:
   resolution: "@dearest/app@workspace:apps/app"
   dependencies:
     "@hey-api/openapi-ts": "npm:0.99.0"
-    "@mantine/core": "npm:9.8.0"
-    "@mantine/form": "npm:9.8.0"
-    "@mantine/hooks": "npm:9.8.0"
+    "@mantine/core": "npm:9.8.2"
+    "@mantine/form": "npm:9.8.2"
+    "@mantine/hooks": "npm:9.8.2"
     "@phosphor-icons/react": "npm:^2.1.10"
-    "@tanstack/react-query": "npm:^5.107.1"
+    "@tanstack/react-query": "npm:^5.108.4"
     "@tanstack/react-router": "npm:^1.170.46"
-    "@types/react": "npm:^19.3.0"
+    "@types/react": "npm:^19.3.1"
     "@types/react-dom": "npm:^19.3.0"
     "@vitejs/plugin-react": "npm:^6.3.0"
-    postcss: "npm:^8.5.32"
+    postcss: "npm:^8.5.33"
     postcss-preset-mantine: "npm:1.18.0"
     postcss-simple-vars: "npm:^7.0.1"
     react: "npm:^19.3.1"
@@ -243,9 +243,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/core@npm:9.8.0":
-  version: 9.8.0
-  resolution: "@mantine/core@npm:9.8.0"
+"@mantine/core@npm:9.8.2":
+  version: 9.8.2
+  resolution: "@mantine/core@npm:9.8.2"
   dependencies:
     "@floating-ui/react": "npm:^0.27.20"
     clsx: "npm:^2.1.1"
@@ -253,32 +253,32 @@ __metadata:
     react-remove-scroll: "npm:^2.7.2"
     type-fest: "npm:^5.10.0"
   peerDependencies:
-    "@mantine/hooks": 9.8.0
+    "@mantine/hooks": 9.8.2
     react: ^19.2.0
     react-dom: ^19.2.0
-  checksum: 10c0/3f7738bd71df2e40354d589fb389e1886d7198e5d9302db31ac1f084e911e32b4facbd5f35e75a15241bcea242dcea5b0f99ea5a00586353d13f9423c012795d
+  checksum: 10c0/b45cac845bc74c552b70ea29e35fa32495dffe9fea42535f4cf638a72d9810823a13ac9b52b4e96d44c6ef0283e95527ed356e50d411d1d5c06cbeb82f244d4c
   languageName: node
   linkType: hard
 
-"@mantine/form@npm:9.8.0":
-  version: 9.8.0
-  resolution: "@mantine/form@npm:9.8.0"
+"@mantine/form@npm:9.8.2":
+  version: 9.8.2
+  resolution: "@mantine/form@npm:9.8.2"
   dependencies:
     "@standard-schema/spec": "npm:^1.1.0"
     fast-deep-equal: "npm:^3.1.3"
     klona: "npm:^2.0.6"
   peerDependencies:
     react: ^19.2.0
-  checksum: 10c0/be440939c517b94e5a0ff077024321633f551e3d6ec48b2c6c8f7f6c1916df019fd0ad6761aae45ba90cedcc000c625f9ab33fdca3315b36162adee72cd3d9b3
+  checksum: 10c0/a856f1e5dfd9dd66974775cdb2e023184d57c8e38aab517bf35e3325cbd16d1ab9edc044e9d1f30892b23f26a9cf446eeb50111d7e2804dcb45c4fc4e2488770
   languageName: node
   linkType: hard
 
-"@mantine/hooks@npm:9.8.0":
-  version: 9.8.0
-  resolution: "@mantine/hooks@npm:9.8.0"
+"@mantine/hooks@npm:9.8.2":
+  version: 9.8.2
+  resolution: "@mantine/hooks@npm:9.8.2"
   peerDependencies:
     react: ^19.2.0
-  checksum: 10c0/ba53b359c0564e3bf2c6e3506b538b569620f7459c806d7853a821bb7718594e3a27e1a62e1c35a21f1fe1b33a1c5c77d5604146578cf99eec405b61b29eded4
+  checksum: 10c0/cc725bc91779b1c3f8905829ef4258fcd563243169ea1ae4292f63380f705167a34035b69ae0269c137eb1502f5ed4ed45f868c86ca578b06b7e4fcb326a6c91
   languageName: node
   linkType: hard
 
@@ -678,25 +678,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:5.107.1":
-  version: 5.107.1
-  resolution: "@tanstack/query-core@npm:5.107.1"
-  checksum: 10c0/991070e0d7b9a7fb7459f6399090f22e9769dd30efcea316c3e9a0b5442990378fcdd9ed37548cec0729c627189e091100dbe7d3778c666100c373db0b978963
+"@tanstack/query-core@npm:5.108.4":
+  version: 5.108.4
+  resolution: "@tanstack/query-core@npm:5.108.4"
+  checksum: 10c0/3ea20c613e0800b82ccee872a3946b8030156003b8cc15a9c6615b6ce1bd49e4c77935585353f7409a2168c52fc2c02f2d0b619637e77d4f0028f270fb64f17e
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^5.107.1":
-  version: 5.107.1
-  resolution: "@tanstack/react-query@npm:5.107.1"
+"@tanstack/react-query@npm:^5.108.4":
+  version: 5.108.4
+  resolution: "@tanstack/react-query@npm:5.108.4"
   dependencies:
-    "@tanstack/query-core": "npm:5.107.1"
+    "@tanstack/query-core": "npm:5.108.4"
   peerDependencies:
     "@types/react": ^18 || ^19
     react: ^18 || ^19
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10c0/c4a46bbacf5fe69fbe487495e74bad3e17857d19eeccad5e066cf4bbe148a831c082b429a6646874b7809cdf245bbdf08e93cfe3fae52b605edf0c38dcab7369
+  checksum: 10c0/63c2f6c4f99b0c023c26b4b851b25170c402d15001cb6d4c5821dd389a108ea7c1d7ffd91d8d833fde6d8ce011ef01a2dcd3f00a3b8a8870db4b933279a7756b
   languageName: node
   linkType: hard
 
@@ -819,12 +819,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.3.0":
-  version: 19.3.0
-  resolution: "@types/react@npm:19.3.0"
+"@types/react@npm:^19.3.1":
+  version: 19.3.1
+  resolution: "@types/react@npm:19.3.1"
   dependencies:
     csstype: "npm:^3.2.2"
-  checksum: 10c0/fbcabf303f935ca9f36ed2dcf81751cf84744098c5a683c8a62a0fa7edd31714b48d5c46b12fd0014f7f2dfe4d9ec6de428a850748eec719a70294e51029551b
+  checksum: 10c0/c008307c9e11bdf69d81073fb1814169ee8373193fc09e7582663ee8c66afb1d3572de2cd5b7a23a7077f66ad0a7114a116579d908f62b3d11aed579c2a5ceaa
   languageName: node
   linkType: hard
 
@@ -2800,14 +2800,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.5.32":
-  version: 8.5.32
-  resolution: "postcss@npm:8.5.32"
+"postcss@npm:^8.5.33":
+  version: 8.5.33
+  resolution: "postcss@npm:8.5.33"
   dependencies:
     nanoid: "npm:^3.3.20"
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.2"
-  checksum: 10c0/5fa6cad84e277c2ced965dc7e8e7c0b8d7e5b76a6835591b57a43fde46e671d0c8428d365e9141c080abaae5441d495ed77ffd7472c5bd41d6c2154bd03c01d7
+  checksum: 10c0/8711c5ad32a798813ae52dd51024881915ecc6171030f9cc1d3766d1969da20ade4cf71a645d7e54668cb45cb9622eac938dc1ce91fe1f9a0fa5f0bc8cbaa05a
   languageName: node
   linkType: hard
 
